@@ -71,13 +71,23 @@ s_1<- gtable_add_grob(s,
 
 #align tables
 h_aligned <- gtable_combine(b_1,s_1,w_1,along = 1)
-grid.arrange(h_aligned,nrow = 1,
-             top = 'Top 10 countries by servings consumed per person, 2010',
+grid.newpage()
+
+grid.arrange(h_aligned,nrow = 1,ncol=1,
+             top = textGrob('Top 10 countries by servings consumed per person, 2010',
+                            gp = gpar(fontface = "bold")
+                             ),
              bottom = textGrob(
                'Source: World Health Organisation',
                gp = gpar(fontface = 3, fontsize = 9),
-               hjust = 1, x= 1)
-)
+               just = 'right'#,  x= 2, y = 5)
+      
+             
+             
+            ))
+
+
+
 
 
 
