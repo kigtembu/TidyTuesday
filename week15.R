@@ -9,7 +9,7 @@ library(tidyverse)
 #read in data and summarise to the 5 cities with the most breweries
 brewery <- read_excel('week15_beers.xlsx',sheet =2)
 
-brewery1 <-filter(df,city != '')%>%
+brewery1 <-filter(brewery,city != '')%>%
            group_by(city)%>%
            summarise(count =n())%>%
            arrange(desc(count))%>%
