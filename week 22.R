@@ -26,7 +26,8 @@ ggplot(tds1,aes(x=as.factor(game_year),y=td))+
       guides(fill=guide_legend(title ='Type of\nTouchdown',title.theme = element_text(size = 10)))+
       labs(title = 'Types of Touchdowns in the NFL',y='Number of Touchdowns',
            x= 'Year',caption = 'Source:Profootball Reference\n@kigtembu')+
-      theme_minimal()
+      theme(axis.text.x = element_text(angle = 90, hjust = 1))
+      
 
 ggsave('week22.png')
 
