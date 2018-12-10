@@ -46,5 +46,5 @@ restaurants <- nyc_restaurants %>% select( boro,camis) %>%
                title = 'Restaurants by New york Borough')+
                theme_wsj()
 
-ggsave('violations.png',plot = violations)
-ggsave('restaurants.png',plot = restaurants)
+ggsave('violations.png',plot = violations,width = 8.08 , height = 4.78)
+ggsave('restaurants.png',plot = restaurants,width = 9.08, height = 4.78)
