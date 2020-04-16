@@ -30,5 +30,5 @@ xyz <- rwa_read("WhatsApp Chat with xyz.txt") %>%
        y = 'Hour of the Day',
        title = "Heatmap of Chats With xyz")
 
-ggsave('leah xyz.png',xyz)
+ggsave('xyz.png',xyz)
 
