@@ -1,0 +1,74 @@
+---
+title: "bee_colonies"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+library(tidyverse)
+library(lubridate)
+library(RColorBrewer)
+```
+
+## Bee colonies stressors
+
+Let's read in the data first and look at the first few rows.
+We will focus on the stressors of bee colonies
+
+```{r}
+
+stressor <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-01-11/stressor.csv')
+
+
+```
+The stressors being tracked are:
+* Varroa mites
+* Other pests/parasites
+* Diseases
+* Pesticides
+* Other
+* Unknown
+
+```{r wrangling}
+
+stressor_with_quarters <- stressor %>% 
+  mutate(date = case_when(
+    months == 'January-March' ~ ymd(str_c(as.character(year),'01','01',sep = '-')),
+    months == 'April-June' ~ ymd(str_c(as.character(year),'04','01',sep = '-')),
+    months == 'July-September' ~ ymd(str_c(as.character(year),'07','01',sep = '-')),
+    months == 'October-December' ~ ymd(str_c(as.character(year),'10','01',sep = '-'))
+  ), quarter = lubridate::quarter(date,with_year = TRUE)) %>% 
+  filter(state == 'United States')
+
+```
+
+The plot below shows the percentage of bee colonies affected by various stressors between 2015 - 2021.
+
+```{r line plot}
+
+stressor_with_quarters %>% ggplot(aes(x = quarter,y = stress_pct,color = stressor)) + 
+  geom_line()+
+  geom_vline(xintercept = 2019.2,linetype = 'dotted')+
+  geom_curve(aes(x = 2019.4,y = 50,xend = 2019.2,yend = 55),size = 1,
+             arrow = arrow(length = unit(0.03, "npc")))+
+  geom_label(aes(x = 2019.4,y = 50,label = 'Missing data for\nQ2 2019.'),
+             size = 3,color = 'red')+
+  scale_color_brewer(type = 'qual')+
+  labs(title = '% of Bee Colonies affected by stressors',
+       subtitle = 'Colony can be affected by multiple stressors in a quarter.',
+       caption = 'Source:USDA\n Graph:@kigtembu',
+       y = '%',
+       x = 'Year-Quarter')+
+  theme_light()
+
+```
+
+
+
+
+
+
