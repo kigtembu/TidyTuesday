@@ -1,5 +1,5 @@
 ---
-title: "bee_colonies"
+title: "Bee Colonies"
 output: html_document
 ---
 
@@ -26,12 +26,15 @@ stressor <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/t
 
 ```
 The stressors being tracked are:
+
 * Varroa mites
 * Other pests/parasites
 * Diseases
 * Pesticides
 * Other
 * Unknown
+
+We then do some data wrangling to get the dates in quarter format.
 
 ```{r wrangling}
 
@@ -67,7 +70,8 @@ stressor_with_quarters %>% ggplot(aes(x = quarter,y = stress_pct,color = stresso
 
 ```
 
-
+There is missing data in Q2 2019. **Varroa mites** stand out as the biggest
+stressor of bee colonies in the US.
 
 
 
