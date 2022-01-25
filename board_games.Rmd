@@ -1,0 +1,63 @@
+---
+title: "Board Games"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE
+)
+
+library(tidyverse)
+library(tidytuesdayR)
+```
+
+
+
+This week's tidytuesday dataset is about boardgames.More information can be found on the [tidy tuesday github page](https://github.com/rfordatascience/tidytuesday/blob/master/data/2022/2022-01-25/readme.md)
+
+```{r read-in_data,include=FALSE}
+
+tuesdata <- tidytuesdayR::tt_load('2022-01-25')
+
+```
+
+```{r explore-data,echo=TRUE}
+
+ratings <- tuesdata$ratings
+details <- tuesdata$details
+
+ratings %>% head()
+details %>% head()
+
+
+```
+
+We can merge the two datasets `ratings` and `details` on `id`
+
+```{r}
+
+ratings_with_details <- ratings %>% inner_join(details,by = 'id')
+
+```
+
+Let's investigate whether there is a relationship between `Max no. of Players` and `average rating`.
+
+```{r}
+ratings_with_details %>%   
+  select(average,maxplayers) %>% 
+  ggplot(aes(maxplayers,average)) +
+  geom_jitter()+
+  theme_light()+
+  labs(x = 'Max No. of Players allowed for the Board game',
+       y = 'Average rating',
+       title = 'Average rating vs Max No. of Players',
+       caption = 'Source: Kaggle/Board Games geek\n Graph: @kigtembu')
+
+
+```
+
+
+There isn't a linear relationship between the Maximum number of players a board game  has and it's average rating.
