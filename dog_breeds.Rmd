@@ -1,0 +1,58 @@
+---
+title: "Dog breeds"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warning = FALSE,message = FALSE)
+
+library(tidyverse)
+```
+
+This week's(1/31) tidytuesday dataset is about dog breeds.More information can be found on the [tidy tuesday github page](https://github.com/rfordatascience/tidytuesday/blob/master/data/2022/2022-01-25/readme.md)
+
+```{r}
+breed_rank_all <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-01/breed_rank.csv')
+
+breed_rank_all %>% head()
+
+```
+
+The `breed_rank_all` dataset contains the popularity rankings of 165 breeds of dogs based on AKU registration characteristics from 2013 to 2020.
+I take the top ten popular breeds as of 2020 and trace their rank over the years in their subset:
+
+```{r path to top ten,echo=TRUE}
+
+top_ten_breeds_reranked <- breed_rank_all %>% filter(`2020 Rank` <= 10) %>%
+  #reranking step over the now 10 breeds
+  mutate(across(where(is_numeric),row_number)) %>% 
+  pivot_longer(where(is_numeric),names_to = 'year',values_to = 'ranking') %>% 
+  #extract year from year column
+  mutate(year = as.numeric(str_extract(year,"[0-9][0-9][0-9][0-9]")))
+
+```
+
+Let us now visualise this using a bump chart:
+
+```{r plot,echo=TRUE}
+
+top_ten_breeds_reranked %>% ggplot(aes(x = year,y = ranking,group = Breed))+
+  geom_line(aes(color = Breed),size = 2)+
+  geom_point(aes(color = Breed),size = 4)+
+  scale_y_reverse(breaks = 1:nrow(top_ten_breeds_reranked))+
+  scale_x_continuous(breaks = 2013:2020)+
+  theme_light()+
+  theme(
+    panel.grid.major.y = element_blank(),
+    panel.grid.minor.y = element_blank(),
+    axis.ticks = element_blank()
+  )+
+  labs(
+    x = 'Year',
+    y = 'Ranking',
+    title = 'Popularity of Dog Breeds in the US',
+    caption = "Source: American Kennel Club\n Graph: @kigtembu"
+  )
+```
+
+The french bulldog has had a meteoric rise in popularity over the last 8 years.
