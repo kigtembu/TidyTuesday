@@ -1,0 +1,73 @@
+---
+title: "Breast-Cancer"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(tidymodels)
+library(xgboost)
+```
+
+## Breast Cancer
+
+I bumped into a breast cancer dataset on [kaggle](https://www.kaggle.com/yasserh/breast-cancer-dataset) and will use
+it to create a tutorial on using the **tidymodels** framework for machine learning.
+
+```{r message=FALSE, warning=FALSE}
+# read in the csv data
+breast_cancer <- read_csv('breast-cancer.csv')
+
+#let's remove the id column and make diagnosis a factor variable
+breast_cancer_clean <- breast_cancer %>% select(-id) %>% 
+  mutate(diagnosis = factor(diagnosis,levels = c('M','B')))
+
+glimpse(breast_cancer_clean)
+```
+ The dataset has 569 rows with 32 columns. **diagnosis** is the target variable.We have 30 features that can be used
+ to create a classification model.
+ 
+ Let us first split the datasets into test(25%) and train(75%) data:
+```{r}
+breast_cancer_split <- initial_split(breast_cancer_clean,prop = 0.75,strata = diagnosis)
+breast_cancer_training <- breast_cancer_split %>% training()
+breast_cancer_test <- breast_cancer_split %>% testing()
+```
+ 
+Let's try fitting a basic xgboost model:
+
+```{r logistic model,warning=FALSE}
+#define model specification
+bc_xgboost_model <- boost_tree(trees = 15) %>% 
+  set_engine('xgboost') %>% 
+  set_mode('classification')
+
+#fit the model 
+bc_xgboost_fit <- bc_xgboost_model %>% 
+  fit(diagnosis ~ ., data = breast_cancer_training)
+
+```
+
+Let's predict using the xgboost model fitted:
+
+```{r predictions}
+bc_predictions <- bc_xgboost_fit %>% 
+  predict(breast_cancer_test)
+
+bc_predictions_probs <- bc_xgboost_fit %>% 
+  predict(breast_cancer_test,type = 'prob')
+
+```
+
+We will then carry out a model evaluation:
+
+```{r model evaluation}
+breast_cancer_test_results <- breast_cancer_test %>% bind_cols(bc_predictions,bc_predictions_probs)
+
+breast_cancer_test_results %>% roc_curve(truth = diagnosis,estimate = .pred_M) %>% autoplot()
+
+```
+
+
+This is a very good model getting an auc of > 0.90!
