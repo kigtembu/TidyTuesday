@@ -12,7 +12,7 @@ library(xgboost)
 
 ## Breast Cancer
 
-I bumped into a breast cancer dataset on [kaggle](https://www.kaggle.com/yasserh/breast-cancer-dataset) and will use
+I bumpedinto a breast cancer dataset on [kaggle](https://www.kaggle.com/yasserh/breast-cancer-dataset) and will use
 it to create a tutorial on using the **tidymodels** framework for machine learning.
 
 ```{r message=FALSE, warning=FALSE}
